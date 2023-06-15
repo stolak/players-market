@@ -25,9 +25,6 @@ class MarketController extends AbstractController
   #[Route('/market-place', name: 'app_market_place')]
   public function market(Request $request): Response
   {
-
-    $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
     $playerQuery = $this->doctrine->getManager()->getRepository(Players::class)
       ->findAllTeam();
     $pagination = $this->paginator->paginate(
@@ -45,14 +42,18 @@ class MarketController extends AbstractController
   public function placeOrder(Request $request, int $id): Response
   {
     $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+    $error='';
     $playerQuery = $this->doctrine->getManager()->getRepository(Players::class)
-      ->find($id);
+      ->findOneJoinTeam($id);
     if (isset($_POST['submit'])) {
+    if($this->getUser()->getTeamId()===$playerQuery[0]->getTeamId()){
+      $error="You cannot buy this player because it exist within your team";
 
+    }else{
       $entityManager = $this->doctrine->getManager();
       $player = new Orders();
       $player->setPlayerId($id);
-      $player->setTeamId($playerQuery->getTeamId());
+      $player->setTeamId($playerQuery[0]->getTeamId());
       $player->setInterestedTeam($this->getUser()->getTeamId());
       $player->setOfferAmount(is_numeric($request->request->get('_offerAmount')) ? $request->request->get('_offerAmount') : 0);
       $player->setStatus(1);
@@ -60,9 +61,12 @@ class MarketController extends AbstractController
       $entityManager->flush();
       return $this->redirectToRoute('app_my_order');
     }
+    }
     return $this->render('market/order.html.twig', [
       'error'         => '',
-      'player' => $playerQuery
+      'err'         => $error,
+      'player' => $playerQuery,
+      'moneyBalance' =>  $this->doctrine->getManager()->getRepository(Teams::class)->find($this->getUser()->getTeamId())->getBalance()
     ]);
   }
 

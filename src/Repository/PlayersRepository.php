@@ -80,13 +80,20 @@ class PlayersRepository extends ServiceEntityRepository
     }
 
 
-    //    public function findOneBySomeField($value): ?Players
-    //    {
-    //        return $this->createQueryBuilder('p')
-    //            ->andWhere('p.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    public function findOneJoinTeam($value)
+    {
+        return $this->createQueryBuilder('p')
+            ->select(['p'])
+            ->addselect(['t.name'])
+            ->leftJoin(
+                Teams::class,
+                't',
+                Join::WITH,
+                'p.team_id=t.id'
+            )
+            ->andWhere('p.id = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
 }

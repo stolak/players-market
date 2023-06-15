@@ -12,14 +12,14 @@ Requirements
   * and the [usual Symfony application requirements].
 
 Installation
-------------
+-------------
 
 
 [Download Composer] and use the `composer` binary installed
 on your computer to run these commands:
 
 
-# ...or you can clone the code repository and install its dependencies
+## ...or you can clone the code repository and install its dependencies
 $ git https://github.com/stolak/player-market.git
 $ cd player-markett/
 $ composer install

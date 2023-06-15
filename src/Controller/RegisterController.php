@@ -14,70 +14,66 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class RegisterController extends AbstractController
+{
+  private $doctrine;
+  private $passwordHasher;
+  public function __construct(UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine)
   {
-    private $doctrine;
-    private $passwordHasher;
-    public function __construct(UserPasswordHasherInterface $passwordHasher, ManagerRegistry $doctrine)
-    {
-        $this->passwordHasher = $passwordHasher;
-        $this->doctrine = $doctrine;
-    }
-      #[Route('/register', name: 'app_register')]
-     public function index(AuthenticationUtils $authenticationUtils, Request $request,ValidatorInterface $validator): Response
-      {
-        // get the login error if there is one
-         $error = $authenticationUtils->getLastAuthenticationError();
-         // last username entered by the user
-         $lastUsername = $authenticationUtils->getLastUsername();
-         $lastUsername = $request->request->get('_company');
-        //  die($lastUsername);
-        if ( isset($_POST['submit']) ) {
-         $entityManager = $this->doctrine->getManager();
-
-         $team = new Teams();
-         $team->setName($request->request->get('_team'));
-         $team->setCountry($request->request->get('_country'));
-         $team->setBalance(is_numeric($request->request->get('_balance'))?$request->request->get('_balance'):0);
-         // check if there is error in all set contraints
-        
-         $entityManager->persist($team);
-         $errors = $validator->validate($team);
-        
-         if (count($errors) > 0) {
-          return $this->render('registration/index.html.twig', [
-            'last_username' => $lastUsername,
-            'error'         => $error,
-            'errors'         => $errors,
-         ]);
-      }
-         $entityManager->flush();
-
-         $user = new User();
-         $user->setEmail($request->request->get('_email'));
-         $user->setName($request->request->get('_team'));
-         $plaintextPassword =$request->request->get('_password');
-         $hashedPassword = $this->passwordHasher->hashPassword(
-             $user,
-             $plaintextPassword
-         );
-         $user->setPassword($hashedPassword);
-         $user->setRoles(["ROLE_MODERATOR"]);
-         $user->setTeamId($team->getId());
-         $entityManager->persist($user);
-         $entityManager->flush();
-
-         return $this->redirectToRoute('app_login');
-        }
-          // return $this->render('login/index.html.twig', [
-          return $this->render('registration/index.html.twig', [
-             'last_username' => $lastUsername,
-             'error'         => $error,
-             'errors'         => [],
-          ]);
-      }
-      #[Route('/logout', name: 'app_logout')]
-      public function logout(): void
-      {
-         
-      }
+    $this->passwordHasher = $passwordHasher;
+    $this->doctrine = $doctrine;
   }
+  #[Route('/register', name: 'app_register')]
+  public function index(AuthenticationUtils $authenticationUtils, Request $request, ValidatorInterface $validator): Response
+  {
+    // get the login error if there is one
+    $error = $authenticationUtils->getLastAuthenticationError();
+    // last username entered by the user
+    $lastUsername = $authenticationUtils->getLastUsername();
+    if (isset($_POST['submit'])) {
+      $entityManager = $this->doctrine->getManager();
+
+      $team = new Teams();
+      $team->setName($request->request->get('_team'));
+      $team->setCountry($request->request->get('_country'));
+      $team->setBalance(is_numeric($request->request->get('_balance')) ? $request->request->get('_balance') : 0);
+      // check if there is error in all set contraints
+
+      $entityManager->persist($team);
+      $errors = $validator->validate($team);
+
+      if (count($errors) > 0) {
+        return $this->render('registration/index.html.twig', [
+          'last_username' => $lastUsername,
+          'error'         => $error,
+          'errors'         => $errors,
+        ]);
+      }
+      $entityManager->flush();
+
+      $user = new User();
+      $user->setEmail($request->request->get('_email'));
+      $user->setName($request->request->get('_team'));
+      $plaintextPassword = $request->request->get('_password');
+      $hashedPassword = $this->passwordHasher->hashPassword(
+        $user,
+        $plaintextPassword
+      );
+      $user->setPassword($hashedPassword);
+      $user->setRoles(["ROLE_MODERATOR"]);
+      $user->setTeamId($team->getId());
+      $entityManager->persist($user);
+      $entityManager->flush();
+
+      return $this->redirectToRoute('app_login');
+    }
+    return $this->render('registration/index.html.twig', [
+      'last_username' => $lastUsername,
+      'error'         => $error,
+      'errors'         => [],
+    ]);
+  }
+  #[Route('/logout', name: 'app_logout')]
+  public function logout(): void
+  {
+  }
+}

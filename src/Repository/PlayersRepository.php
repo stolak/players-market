@@ -41,48 +41,52 @@ class PlayersRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Players[] Returns an array of Players objects
-//     */
-   public function findByTeam($value): array
-   {
-       return $this->createQueryBuilder('p')
+    //    /**
+    //     * @return Players[] Returns an array of Players objects
+    //     */
+    public function findByTeam($value): array
+    {
+        return $this->createQueryBuilder('p')
             ->select(['p'])
             ->addselect(['t.name'])
-           ->andWhere('p.team_id = :val')
-           ->leftJoin(
-            Teams::class,'t',Join::WITH, 'p.team_id=t.id'
-           )
-           ->setParameter('val', $value)
-           ->orderBy('p.id', 'ASC')
-        //    ->setMaxResults(10)
-           ->getQuery()
-           ->getResult()
-       ;
-   }
+            ->andWhere('p.team_id = :val')
+            ->leftJoin(
+                Teams::class,
+                't',
+                Join::WITH,
+                'p.team_id=t.id'
+            )
+            ->setParameter('val', $value)
+            ->orderBy('p.id', 'ASC')
+            //    ->setMaxResults(10)
+            ->getQuery()
+            ->getResult();
+    }
 
-   public function findAllTeam(): array
-   {
-       return $this->createQueryBuilder('p')
+    public function findAllTeam(): array
+    {
+        return $this->createQueryBuilder('p')
             ->select(['p'])
             ->addselect(['t.name'])
-           ->leftJoin(
-            Teams::class,'t',Join::WITH, 'p.team_id=t.id'
-           )
-           ->orderBy('p.team_id', 'ASC')
-           ->getQuery()
-           ->getResult()
-       ;
-   }
-   
+            ->leftJoin(
+                Teams::class,
+                't',
+                Join::WITH,
+                'p.team_id=t.id'
+            )
+            ->orderBy('p.team_id', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 
-//    public function findOneBySomeField($value): ?Players
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+
+    //    public function findOneBySomeField($value): ?Players
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

@@ -1,6 +1,6 @@
-# player-market
 
-Symfony Demo Application
+
+ Players market
 ========================
 
 

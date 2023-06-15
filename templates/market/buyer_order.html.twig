@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <section data-bs-version="5.1" class="form6 cid-tjttyxMM3T" id="form6-o">
+        <div class="container">
+            <div class="card-body">
+            <h1> Purchasing Orders</div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th rowspan="1">S/N</th>
+                                <th rowspan="1">Player</th>
+                                <th rowspan="1">Current team</th>
+                                <th rowspan="1">Market worth </th>
+                                <th rowspan="1">Amount Bid</th>
+                                <th rowspan="1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            {% for player in awaitingPurchaseOrder %}  
+                            <tr>
+                                <td >
+                                1
+                                </td>
+                                <td >
+                                    {{player.firstName}} {{player.lastName}}
+                                </td>
+                                <td >
+                                    {{player.name}}
+                                </td>
+                                <td >
+                                    {{player.market_value|number_format(2, '.', ',')}}
+                                </td>
+                                <td >
+                                    {{player[0].offerAmount|number_format(2, '.', ',')}}
+                                </td>
+                                <td >
+                                <form  method="post">
+                                <input type="hidden"  name="id" value="{{player[0].id}}" >
+                                <button type="submit"  name="delete" class="btn btn-danger display-4">Cancel order</button>
+                                </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            <h1> Orders from Interested Buyers</div>
+                <div class="table-responsive">
+                    <table class="table table-hover table-center mb-0">
+                        <thead>
+                            <tr>
+                                <th rowspan="1">S/N</th>
+                                <th rowspan="1">Player</th>
+                                <th rowspan="1">Prospective buyer team</th>
+                                <th rowspan="1">Market worth </th>
+                                <th rowspan="1">Amount Bid</th>
+                                <th rowspan="1">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody> 
+                            {% for player in awaitingSalesOrder %}  
+                            <tr>
+                                <td >
+                                1
+                                </td>
+                                <td >
+                                    {{player.firstName}} {{player.lastName}}
+                                </td>
+                                <td >
+                                    {{player.name}}
+                                </td>
+                                <td >
+                                    {{player.market_value|number_format(2, '.', ',')}}
+                                </td>
+                                <td >
+                                    {{player[0].offerAmount|number_format(2, '.', ',')}}
+                                </td>
+                                <td >
+                                  <form  method="post">
+                                <input type="hidden" name="id" value="{{player[0].id}}" >
+                                    <button type="submit"  name="submit" class="btn btn-success display-4">Sell Now</button>
+                                </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+          
+    </div>
+</section>  
+ 
+    
+
+   
+
+{% endblock %}
